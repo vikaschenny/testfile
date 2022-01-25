@@ -1,27 +1,35 @@
-name: automerge
+name: Continuous Integration
+
 on:
-  pull_request:
+  # Trigger on Pull Requests against the master branch.
+  pull_request_target:
+    branches:
+      - release/1.0
     types:
-      - labeled
-      - unlabeled
-      - synchronize
       - opened
-      - edited
-      - ready_for_review
-      - reopened
-      - unlocked
-  pull_request_review:
-    types:
-      - submitted
-  check_suite:
-    types:
-      - completed
-  status: {}
+      - synchronize
+
 jobs:
-  automerge:
+  # Add other CI jobs, such as testing and linting. The example test job
+  # showcases checkout settings which support `pull_request_target` and `push`
+  # triggers at the same time.
+
+  merge-me:
+    name: Merge me!
     runs-on: ubuntu-latest
     steps:
-      - name: automerge
-        uses: "pascalgn/automerge-action@v0.14.3"
-        env:
-          GITHUB_TOKEN: "${{ secrets.TEST_GITHUB_TOKEN }}"
+      - name: Merge me!
+        uses: ridedott/merge-me-action@v2
+        with:
+          # Depending on branch protection rules, a  manually populated
+          # `GITHUB_TOKEN_WORKAROUND` secret with permissions to push to
+          # a protected branch must be used. This secret can have an arbitrary
+          # name, as an example, this repository uses `DOTTBOTT_TOKEN`.
+          #
+          # When using a custom token, it is recommended to leave the following
+          # comment for other developers to be aware of the reasoning behind it:
+          #
+          # This must be used as GitHub Actions token does not support pushing
+          # to protected branches.
+          GITHUB_TOKEN: ${{ secrets.TEST_GITHUB_TOKEN }}
+    timeout-minutes: 5
